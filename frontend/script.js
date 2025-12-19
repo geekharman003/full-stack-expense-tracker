@@ -5,6 +5,7 @@ const handleFormSubmit = (event) => {
   const name = event.target.name.value;
   const email = event.target.email.value;
   const password = event.target.password.value;
+  const message = document.getElementById("message");
 
   axios
     .post(`${BASE_URL}/signup`, {
@@ -13,9 +14,12 @@ const handleFormSubmit = (event) => {
       password,
     })
     .then((res) => {
-      console.log(res.data);
+      message.textContent = res.data;
+      message.style.color = "green";
     })
     .catch((err) => {
+      message.textContent = err.response.data;
+      message.style.color = "red";
       console.log(err.message);
     });
 };

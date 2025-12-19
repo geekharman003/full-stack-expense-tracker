@@ -4,11 +4,11 @@ body {
 }
 
 /* signup page css */
-#signup-form-container{
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#signup-form-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #signup-form {
@@ -54,6 +54,10 @@ body {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+#message {
+  text-align: center;
 }
 
 .form-footer {

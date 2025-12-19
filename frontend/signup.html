@@ -9,7 +9,7 @@
   <body>
     <div id="main">
       <div id="signup-form-container">
-        <form id="signup-form">
+        <form id="signup-form" onsubmit="handleFormSubmit(event)">
           <div class="form-title">Sign Up</div>
 
           <div class="form-body">
@@ -17,6 +17,7 @@
               <label for="name">Name:</label>
               <input
                 required
+                id="name"
                 placeholder="John Doe"
                 class="form-input"
                 type="text"
@@ -28,6 +29,7 @@
               <label for="email">Email:</label>
               <input
                 required
+                id="email"
                 placeholder="john@gmail.com"
                 class="form-input"
                 type="email"
@@ -39,10 +41,12 @@
               <label for="password">Password:</label>
               <input
                 required
+                id="password"
                 placeholder="........"
                 class="form-input"
                 type="password"
                 name="password"
+                minlength="8"
               />
             </div>
           </div>
@@ -50,6 +54,7 @@
           <button class="submit-button" type="submit">
             <span class="button-text">Create Account</span>
           </button>
+          <p id="message"></p>
 
           <div class="form-footer">
             <a class="login-link" href="#">
