@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="main">
+      <div id="signup-form-container">
+        <form id="signup-form">
+          <div class="form-title">Sign Up</div>
+
+          <div class="form-body">
+            <div class="input-group">
+              <label for="name">Name:</label>
+              <input
+                required
+                placeholder="John Doe"
+                class="form-input"
+                type="text"
+                name="name"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="email">Email:</label>
+              <input
+                required
+                placeholder="john@gmail.com"
+                class="form-input"
+                type="email"
+                name="email"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="password">Password:</label>
+              <input
+                required
+                placeholder="........"
+                class="form-input"
+                type="password"
+                name="password"
+              />
+            </div>
+          </div>
+
+          <button class="submit-button" type="submit">
+            <span class="button-text">Create Account</span>
+          </button>
+
+          <div class="form-footer">
+            <a class="login-link" href="#">
+              Already have an account? <span>Login</span>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js"
+      integrity="sha512-h9644v03pHqrIHThkvXhB2PJ8zf5E9IyVnrSfZg8Yj8k4RsO4zldcQc4Bi9iVLUCCsqNY0b4WXVV4UB+wbWENA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="script.js"></script>
+  </body>
+</html>
