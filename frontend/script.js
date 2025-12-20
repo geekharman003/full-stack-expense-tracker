@@ -1,6 +1,6 @@
 const BASE_URL = "http://localhost:3000/user";
 
-const handleFormSubmit = (event) => {
+const handleSignUpForm = (event) => {
   event.preventDefault();
   const name = event.target.name.value;
   const email = event.target.email.value;
@@ -22,4 +22,27 @@ const handleFormSubmit = (event) => {
       message.style.color = "red";
       console.log(err.message);
     });
+};
+
+const handleLoginForm = (event) => {
+  event.preventDefault();
+  const email = event.target.email.value;
+  const password = event.target.password.value;
+
+  console.log(email, password);
+
+  // axios
+  //   .post(`${BASE_URL}/login`, {
+  //     email,
+  //     password,
+  //   })
+  //   .then((res) => {
+  //     message.textContent = res.data;
+  //     message.style.color = "green";
+  //   })
+  //   .catch((err) => {
+  //     message.textContent = err.response.data;
+  //     message.style.color = "red";
+  //     console.log(err.message);
+  //   });
 };

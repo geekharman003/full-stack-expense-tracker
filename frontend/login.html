@@ -3,34 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Signup</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="main">
-      <div id="signup-form-container">
-        <form id="signup-form" onsubmit="handleSignUpForm(event)">
-          <div class="form-title">Sign Up</div>
+      <div id="login-form-container">
+        <form id="login-form" onsubmit="handleLoginForm(event)">
+          <div class="form-title">Login</div>
 
           <div class="form-body">
-            <div class="input-group">
-              <label for="name">Name:</label>
-              <input
-                required
-                id="name"
-                placeholder="John Doe"
-                class="form-input"
-                type="text"
-                name="name"
-              />
-            </div>
-
             <div class="input-group">
               <label for="email">Email:</label>
               <input
                 required
                 id="email"
-                placeholder="john@gmail.com"
                 class="form-input"
                 type="email"
                 name="email"
@@ -42,7 +29,6 @@
               <input
                 required
                 id="password"
-                placeholder="........"
                 class="form-input"
                 type="password"
                 name="password"
@@ -52,13 +38,13 @@
           </div>
 
           <button class="submit-button" type="submit">
-            <span class="button-text">Create Account</span>
+            <span class="button-text">Login</span>
           </button>
           <p id="message"></p>
 
           <div class="form-footer">
-            <a class="login-link" href="./login.html">
-              Already have an account? <span>Login</span>
+            <a class="login-link" href="./signup.html">
+              New User? <span>Signup</span>
             </a>
           </div>
         </form>

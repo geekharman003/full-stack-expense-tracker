@@ -4,14 +4,16 @@ body {
 }
 
 /* signup page css */
-#signup-form-container {
+#signup-form-container,
+#login-form-container {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-#signup-form {
+#signup-form,
+#login-form {
   width: 300px;
   padding: 2rem;
   border-radius: 1rem;
