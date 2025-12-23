@@ -4,16 +4,16 @@ const db = require("./utils/db-connection");
 const models = require("./models");
 const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
+const paymentsRoutes = require("./routes/paymentRoutes");
 const cors = require("cors");
-const path = require("path");
 const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
-// app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/user", userRoutes);
 app.use("/expenses", expenseRoutes);
+app.use("/", paymentsRoutes);
 
 db.sync()
   .then(() => {
