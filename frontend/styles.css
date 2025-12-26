@@ -178,3 +178,13 @@ body {
 #expense-list {
   list-style-type: numeric;
 }
+
+@media screen and (max-width:480px){
+  #expense-form-container {
+    flex-direction: column-reverse;
+  }
+
+  #leaderboard-section {
+    margin-bottom: 1rem;
+  }
+}

@@ -1,5 +1,6 @@
 const USER_BASE_URL = "http://localhost:3000/user";
 const EXPENSE_BASE_URL = "http://localhost:3000/expenses";
+const BASE_URL = "http://localhost:3000";
 
 const handleSignUpForm = (event) => {
   event.preventDefault();
@@ -78,7 +79,7 @@ const createLi = (id, amount, description, category) => {
   const li = document.createElement("li");
   const deleteBtn = document.createElement("button");
 
-  deleteBtn.textContent = "Delete Button";
+  deleteBtn.textContent = "Delete";
   deleteBtn.addEventListener("click", () => {
     deleteExpense(id, li);
   });
@@ -108,10 +109,9 @@ const showLeaderBoard = () => {
   const leaderboardList = document.getElementById("leaderboard-list");
   leaderboardList.innerHTML = "";
   axios
-    .get(`${USER_BASE_URL}/premiumUsers`)
+    .get(`${BASE_URL}/premium/leaderBoard`)
     .then((res) => {
       const users = res.data;
-      users.sort((a, b) => b["totalExpense"] - a["totalExpense"]);
       users.forEach((user) => {
         const { name, totalExpense } = user;
         addUserToLeaderBoard(leaderboardList,name, totalExpense);

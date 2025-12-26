@@ -1,4 +1,3 @@
-const { raw } = require("express");
 const Expense = require("../models/expenseModel");
 const User = require("../models/userModel");
 
@@ -13,32 +12,12 @@ const addExpense = async (req, res) => {
         .send("amount,description and category are required");
     }
 
-    const fetchedUser = await User.findByPk(user.id, { raw: true });
-
-    const prevTotalExpense = fetchedUser.totalExpense;
-    const newTotalExpense = prevTotalExpense + Number(amount);
-
-    await User.update(
-      {
-        totalExpense: newTotalExpense,
-      },
-      {
-        where: {
-          id: user.id,
-        },
-      }
-    );
-
-    // console.log(prevTotalExpense);
-
-    // User.update({totalExpense:})
-
     const expense = await Expense.create(
       {
         amount,
         description,
         category,
-        userId: req.user.id,
+        userId: user.id,
       },
       {
         raw: true,
@@ -58,26 +37,6 @@ const addExpense = async (req, res) => {
 const deleteExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    const { user } = req;
-
-    const fetchedUser = await User.findByPk(user.id, { raw: true });
-    const expense = await Expense.findByPk(id, { raw: true });
-
-    const amountToDelete = expense.amount;
-    const prevTotalExpense = fetchedUser.
-    totalExpense;
-    // calculating the updated expense for the user
-    const newTotalExpense = prevTotalExpense - amountToDelete;
-
-
-    await User.update(
-      { totalExpense: newTotalExpense },
-      {
-        where: {
-          id: user.id,
-        },
-      }
-    );
 
     const expenseToDelete = await Expense.destroy({
       where: {

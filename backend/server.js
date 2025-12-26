@@ -6,14 +6,16 @@ const models = require("./models");
 const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const paymentsRoutes = require("./routes/paymentRoutes");
+const premiumRoutes = require("./routes/premiumRoutes");
 const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
 
+app.use("/", paymentsRoutes);
 app.use("/user", userRoutes);
 app.use("/expenses", expenseRoutes);
-app.use("/", paymentsRoutes);
+app.use("/premium", premiumRoutes);
 
 db.sync()
   .then(() => {
@@ -23,4 +25,4 @@ db.sync()
   })
   .catch((err) => {
     console.log(err.message);
-  });  
+  });
