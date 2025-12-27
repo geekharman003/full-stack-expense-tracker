@@ -53,20 +53,20 @@ const handleExpenseForm = (event) => {
 
   const amount = event.target.amount.value;
   const description = event.target.description.value;
-  const category = event.target.category.value;
   const token = localStorage.getItem("token");
+
   axios
     .post(
       `${EXPENSE_BASE_URL}/addexpense`,
       {
         amount,
         description,
-        category,
       },
       { headers: { Authorization: token } }
     )
     .then((res) => {
       const { id, amount, description, category } = res.data;
+      console.log(category)
       createLi(id, amount, description, category);
     })
     .catch((err) => {

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const db = require("./utils/db-connection");
 const express = require("express");
 const app = express();
@@ -7,6 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const paymentsRoutes = require("./routes/paymentRoutes");
 const premiumRoutes = require("./routes/premiumRoutes");
+const geminiService = require("./services/geminiService");
 const PORT = 3000;
 
 app.use(express.json());
