@@ -12,6 +12,21 @@ const addExpense = async (req, res) => {
         .send("amount,description and category are required");
     }
 
+    const fetchedUser = await User.findByPk(user.id, { raw: true });
+    const prevTotalExpense = fetchedUser.totalExpenses;
+    const newTotalExpense = prevTotalExpense + Number(amount);
+
+    await User.update(
+      {
+        totalExpenses: newTotalExpense,
+      },
+      {
+        where: {
+          id: user.id,
+        },
+      }
+    );
+
     const expense = await Expense.create(
       {
         amount,
@@ -37,6 +52,23 @@ const addExpense = async (req, res) => {
 const deleteExpense = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user } = req;
+
+    const fetchedUser = await User.findByPk(user.id, { raw: true });
+    const expense = await Expense.findByPk(id, { raw: true });
+
+    const newTotalExpense = fetchedUser.totalExpenses - expense.amount;
+
+    await User.update(
+      {
+        totalExpenses: newTotalExpense,
+      },
+      {
+        where: {
+          id: user.id,
+        },
+      }
+    );
 
     const expenseToDelete = await Expense.destroy({
       where: {

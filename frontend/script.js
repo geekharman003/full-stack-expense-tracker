@@ -113,8 +113,8 @@ const showLeaderBoard = () => {
     .then((res) => {
       const users = res.data;
       users.forEach((user) => {
-        const { name, totalExpense } = user;
-        addUserToLeaderBoard(leaderboardList,name, totalExpense);
+        const { name, totalExpenses } = user;
+        addUserToLeaderBoard(leaderboardList, name, totalExpenses);
       });
     })
     .catch((err) => {
@@ -122,9 +122,9 @@ const showLeaderBoard = () => {
     });
 };
 
-const addUserToLeaderBoard = (leaderboardList,name, totalExpense) => {
+const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
   const li = document.createElement("li");
-  li.textContent = `Name-${name},Total Expenses-${totalExpense}`;
+  li.textContent = `Name-${name},Total Expenses-${totalExpenses}`;
 
   leaderboardList.appendChild(li);
 };
