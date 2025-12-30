@@ -4,10 +4,13 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const models = require("./models");
+const paymentsRoutes = require("./routes/paymentRoutes");
 const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
-const paymentsRoutes = require("./routes/paymentRoutes");
 const premiumRoutes = require("./routes/premiumRoutes");
+const passwordRoutes = require("./routes/passwordRoutes");
+const brevoService = require("./services/brevoService");
+const cashFreeService = require("./services/cashfreeService");
 const geminiService = require("./services/geminiService");
 const PORT = 3000;
 
@@ -18,6 +21,7 @@ app.use("/", paymentsRoutes);
 app.use("/user", userRoutes);
 app.use("/expenses", expenseRoutes);
 app.use("/premium", premiumRoutes);
+app.use("/password", passwordRoutes);
 
 db.sync()
   .then(() => {

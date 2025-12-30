@@ -48,6 +48,22 @@ const handleLoginForm = (event) => {
     });
 };
 
+const handleForgotForm = async (event) => {
+  event.preventDefault();
+
+  const email = event.target.email.value;
+
+  try {
+    const res = await axios.post(`${BASE_URL}/password/forgotpassword`, {
+      email,
+    });
+
+    console.log(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const handleExpenseForm = (event) => {
   event.preventDefault();
 
@@ -66,7 +82,7 @@ const handleExpenseForm = (event) => {
     )
     .then((res) => {
       const { id, amount, description, category } = res.data;
-      console.log(category)
+      console.log(category);
       createLi(id, amount, description, category);
     })
     .catch((err) => {

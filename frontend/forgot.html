@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+    <title>Forgot Password</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="main">
-      <div id="login-form-container">
-        <form id="login-form" onsubmit="handleLoginForm(event)">
-          <div class="form-title">Login</div>
+      <div id="forgot-form-container">
+        <form id="forgot-form" onsubmit="handleForgotForm(event)">
+          <div class="form-title">Forgot Password</div>
 
           <div class="form-body">
+            <!-- <p>We'll email you a password reset link.</p> -->
             <div class="input-group">
               <label for="email">Email:</label>
               <input
@@ -21,37 +22,15 @@
                 class="form-input"
                 type="email"
                 name="email"
-              />
-            </div>
-
-            <div class="input-group">
-              <label for="password">Password:</label>
-              <input
-                required
-                id="password"
-                class="form-input"
-                type="password"
-                name="password"
-                minlength="8"
+                placeholder="john@gmail.com"
               />
             </div>
           </div>
 
           <button class="submit-button" type="submit">
-            <span class="button-text">Login</span>
+            <span class="button-text">Reset Password</span>
           </button>
           <p id="message"></p>
-
-          <div class="form-footer">
-            <a class="signup-link" href="./signup.html">
-              New User? <span>Signup</span>
-            </a>
-            <br />
-            <br />
-            <a class="forgot-link" href="./forgot.html"
-              ><span>Forgot Password?</span></a
-            >
-          </div>
         </form>
       </div>
     </div>
