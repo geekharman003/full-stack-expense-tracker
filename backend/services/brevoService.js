@@ -12,18 +12,22 @@ const sender = {
 };
 
 // send the mail
-const sendEmail = async (email) => {
+const sendEmail = async (email, uuid, resetUrl) => {
   const recievers = [
     {
-      email,
+      email: "harmansadhra2003@gmail.com",
     },
   ];
   try {
     const res = await tranEmailApi.sendTransacEmail({
       sender,
       to: recievers,
-      subject: "this is a password reset email",
-      textContent: "you have try to reset the password",
+      subject: "Password Reset Email",
+      textContent: `reset url:{{params.resetUrl}}/{{params.uuid}} `,
+      params: {
+        uuid,
+        resetUrl,
+      },
     });
     console.log(res);
   } catch (error) {

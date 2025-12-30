@@ -52,11 +52,17 @@ const handleForgotForm = async (event) => {
   event.preventDefault();
 
   const email = event.target.email.value;
-
+  const token = localStorage.getItem("token");
   try {
-    const res = await axios.post(`${BASE_URL}/password/forgotpassword`, {
-      email,
-    });
+    const res = await axios.post(
+      `${BASE_URL}/password/forgotpassword`,
+      {
+        email,
+      }
+      // {
+      //   headers: { Authorization: token },
+      // }
+    );
 
     console.log(res.data);
   } catch (error) {

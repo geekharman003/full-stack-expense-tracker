@@ -12,9 +12,11 @@ const passwordRoutes = require("./routes/passwordRoutes");
 const brevoService = require("./services/brevoService");
 const cashFreeService = require("./services/cashfreeService");
 const geminiService = require("./services/geminiService");
+const path = require("path");
 const PORT = 3000;
 
 app.use(express.json());
+app.use(express.static("public"));
 app.use(cors());
 
 app.use("/", paymentsRoutes);
