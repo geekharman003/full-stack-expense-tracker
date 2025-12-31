@@ -11,7 +11,7 @@ body {
 /* signup and login page css */
 #signup-form-container,
 #login-form-container,
-#forgot-form-container {
+#forgot-form-container,#reset-form-container {
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -20,7 +20,8 @@ body {
 
 #signup-form,
 #login-form,
-#forgot-form {
+#forgot-form,
+#reset-form {
   width: 300px;
   padding: 2rem;
   border-radius: 1rem;
@@ -99,11 +100,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* expense css */
-/* #main {
-  display: flex;
-  justify-content: space-evenly;
-} */
+/* expense form css */
 
 #main header {
   text-align: center;

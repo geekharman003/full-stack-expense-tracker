@@ -4,25 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reset Password</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
     <div id="main">
-      <div id="forgot-form-container">
+      <div id="reset-form-container">
         <form id="reset-form" onsubmit="handleResetForm(event)">
           <div class="form-title">Reset Password</div>
 
           <div class="form-body">
-            <div class="input-group">
-              <label for="email">Email:</label>
-              <input
-                required
-                id="email"
-                class="form-input"
-                type="email"
-                name="email"
-              />
-            </div>
             <div class="input-group">
               <label for="password">New Password:</label>
               <input
@@ -51,24 +41,23 @@
     <script>
       const handleResetForm = async (event) => {
         event.preventDefault();
-        const email = event.target.email.value;
         const password = event.target.password.value;
+        const pathname = window.location.pathname;
+        const uuid = pathname.split("/").pop();
 
         try {
           const res = await axios.post(
             "http://localhost:3000/password/resetpassword",
             {
-              email,
               password,
+              uuid,
             }
           );
-
           console.log(res.data);
         } catch (error) {
           console.error(error);
         }
       };
     </script>
-    <!-- <script src="script.js"></script> -->
   </body>
 </html>

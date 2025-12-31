@@ -6,6 +6,7 @@ const sequelize = require("../utils/db-connection");
 const path = require("path");
 const bcrypt = require("bcrypt");
 
+// generates the reset url and send to the user email
 const generateResetUrl = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
@@ -59,6 +60,7 @@ const generateResetUrl = async (req, res) => {
   }
 };
 
+// validate the uuid
 const validateResetUrl = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
@@ -83,7 +85,7 @@ const validateResetUrl = async (req, res) => {
       );
     } else {
       return res.status(400).json({
-        message: "reset password link is not active",
+        message: "reset password url is expired",
         success: false,
       });
     }
@@ -92,50 +94,92 @@ const validateResetUrl = async (req, res) => {
   }
 };
 
-const resetPassword = (req, res) => {
+// reset the password
+const resetPassword = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
-    const { email, password } = req.body;
+    const { password, uuid } = req.body;
 
-    if (!email || !password) {
+    // if no password or uuid is present
+    if (!password || !uuid) {
       return res.status(400).json({
-        message: "email and password are required",
+        message: "password or uuid is missing",
         success: false,
       });
     }
 
-    // change the password in database for this email
+    // find the forgot password request with this uuid
+    const forgotPassRequest = await ForgotPasswordRequests.findByPk(uuid, {
+      raw: true,
+      transaction,
+    });
+
+    // if forgot password reqest is not found
+    if (!forgotPassRequest) {
+      return res.status(404).json({
+        message: "no forgot password request found for this id",
+        success: false,
+      });
+    }
+
+    // if forgot password request is not active
+    if (!forgotPassRequest.isActive) {
+      return res.status(400).json({
+        message: "password reset url is invalid",
+        success: false,
+      });
+    }
+
     // hash the password using bcrypt
     bcrypt.hash(password, 10, async (err, hash) => {
-      // Store hash in your password DB.
+      if (err) {
+        return res.status(401).json({
+          message: "error during password hashing",
+          success: false,
+        });
+      }
+
+      // change the password for user
       const user = await User.update(
         {
           password: hash,
         },
         {
           where: {
-            email,
+            id: forgotPassRequest.userId,
           },
+          transaction,
         }
       );
 
-      if (!user) {
-        throw new Error("error occur during password update");
-      }
-
-      await ForgotPasswordRequests.update({
-        isActive:false
-      },{
-        where:{
-          userId:user.id
+      // make the uuid invalid
+      await ForgotPasswordRequests.update(
+        {
+          isActive: false,
+        },
+        {
+          where: {
+            id: uuid,
+          },
+          transaction,
         }
-      })
+      );
 
-      res.status(201).send("User Created Successfully");
+      //commit the transaction
+      await transaction.commit();
+
+      // send the valid response
+      res.status(200).json({
+        message: "password change successfully",
+        success: true,
+      });
     });
   } catch (error) {
+    // rollback the error in case of error
+    await transaction.rollback();
     console.error(error);
     res.status(500).json({
-      message: "internal server error",
+      message: error.message,
       success: false,
     });
   }
