@@ -42,17 +42,66 @@
 
         <div id="leaderboard-section">
           <p id="premium-user-message"></p>
-        <h3>Leaderboard</h3>
-        <button id="leaderboard-btn" onclick="showLeaderBoard()">
-          Show Leaderboard
-        </button>
-        <ul id="leaderboard-list"></ul>
-      </div>
+          <h3>Leaderboard</h3>
+          <button id="leaderboard-btn" onclick="showLeaderBoard()">
+            Show Leaderboard
+          </button>
+          <ul id="leaderboard-list"></ul>
+        </div>
       </div>
       <br />
       <div id="expenses-section">
         <h2>Expenses</h2>
         <ul id="expense-list"></ul>
+      </div>
+      <div id="filtered-expenses-container">
+        <div>
+          <label for="expensesfilter">Select expenses filter:</label
+          ><select name="expensesfilter" id="expensesfilter">
+            <option value="daily">daily</option>
+            <option value="weekly">weekly</option>
+            <option value="monthly">monthly</option>
+          </select>
+        </div>
+        <h3>Day to Day Expenses</h3>
+        <table id="monthly-expense-table">
+          <tr id="monthly-expense-headings">
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Income</th>
+            <th>Expense</th>
+          </tr>
+          <tr>
+            <td>04-01-2026</td>
+            <td>purchased headphones</td>
+            <td>shopping</td>
+            <td>10000</td>
+            <td>9000</td>
+          </tr>
+          <tr>
+            <td>10-01-2026</td>
+            <td>bought milk</td>
+            <td>milk</td>
+            <td>15000</td>
+            <td>4000</td>
+          </tr>
+          <tr>
+            <td>10-01-2026</td>
+            <td>bought milk</td>
+            <td>milk</td>
+            <td>15000</td>
+            <td>4000</td>
+          </tr>
+          <tr>
+            <td>10-01-2026</td>
+            <td>bought milk</td>
+            <td>milk</td>
+            <td>15000</td>
+            <td>4000</td>
+          </tr>
+        </table>
+        <button id="download-expense-btn" onclick="downloadExpense()">Download Expenses</button>
       </div>
     </div>
     <script
@@ -64,13 +113,6 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const EXPENSE_BASE_URL = "http://localhost:3000/expenses";
-        const premiumUserMessage = document.getElementById(
-          "premium-user-message"
-        );
-        const payBtn = document.getElementById("pay-btn");
-        const leaderboardSection = document.getElementById(
-          "leaderboard-section"
-        );
         const token = localStorage.getItem("token");
 
         axios
@@ -80,11 +122,7 @@
           .then((res) => {
             const { expenses, isPremiumUser } = res.data;
             if (isPremiumUser) {
-              enablePremiumUserFeatures(
-                premiumUserMessage,
-                payBtn,
-                leaderboardSection
-              );
+              enablePremiumUserFeatures();
             }
             expenses.forEach((expense) => {
               const { id, amount, description, category } = expense;
@@ -92,26 +130,12 @@
             });
           })
           .catch((err) => {
+            console.log(err);
             if (err.response.data.isPremiumUser) {
-              enablePremiumUserFeatures(
-                premiumUserMessage,
-                payBtn,
-                leaderboardSection
-              );
+              enablePremiumUserFeatures();
             }
-            console.log(err.message);
           });
       });
-
-      const enablePremiumUserFeatures = (
-        premiumUserMessage,
-        payBtn,
-        leaderboardSection
-      ) => {
-        premiumUserMessage.textContent = "You are now a premium user.😀";
-        payBtn.style.display = "none";
-        leaderboardSection.style.display = "initial";
-      };
     </script>
     <script src="./cashfree.js"></script>
     <script src="./script.js"></script>

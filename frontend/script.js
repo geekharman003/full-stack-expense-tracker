@@ -150,3 +150,15 @@ const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
 
   leaderboardList.appendChild(li);
 };
+
+const enablePremiumUserFeatures = () => {
+  const premiumUserMessage = document.getElementById("premium-user-message");
+  const payBtn = document.getElementById("pay-btn");
+  const leaderboardSection = document.getElementById("leaderboard-section");
+  const downloadExpenseBtn = document.getElementById("download-expense-btn");
+  premiumUserMessage.textContent = "You are now a premium user.😀";
+  payBtn.style.display = "none";
+  leaderboardSection.style.display = "initial";
+  downloadExpenseBtn.style.display = "initial";
+};
+

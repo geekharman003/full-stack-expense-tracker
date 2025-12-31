@@ -8,6 +8,11 @@ body {
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+button {
+  font-family: inherit;
+  width: fit-content;
+}
+
 /* signup and login page css */
 #signup-form-container,
 #login-form-container,
@@ -143,7 +148,6 @@ body {
 
 #expenses-section li {
   margin-bottom: 5px;
-  /* border-bottom: 1px solid black; */
 }
 
 #expenses-section li button {
@@ -187,3 +191,36 @@ body {
     margin-bottom: 1rem;
   }
 }
+
+
+/* day to day expenses css */
+#filtered-expenses-container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  /* align-items: center; */
+}
+
+#monthly-expense-table {
+  width: 400px;
+  margin: 5px 0;
+}
+
+#monthly-expense-table, th, td {
+  border-collapse: collapse;
+  border: 1px solid black;
+  padding: 5px;
+}
+#monthly-expense-table tr:nth-child(even){
+  background-color: rgb(228, 228, 143);
+}
+
+#monthly-expense-headings {
+  background-color: rgb(45, 111, 149);
+  color: white;
+}
+
+#download-expense-btn {
+  display: none;
+}
+
