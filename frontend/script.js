@@ -3,11 +3,16 @@ const EXPENSE_BASE_URL = "http://localhost:3000/expenses";
 const BASE_URL = "http://localhost:3000";
 
 // pagination variables
-let page = 0;
+let currentPage = 0;
 let limit = 2;
 let skip = 0;
 let totalItems = null; //stores the total expenses
 let fetchedItems = 0; //tracks how many expenses are fetched
+let totalPages = null;
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+const currentPageElement = document.getElementById("current-page");
+const totalPageElement = document.getElementById("total-pages");
 
 const handleSignUpForm = (event) => {
   event.preventDefault();
@@ -65,10 +70,10 @@ const handleForgotForm = async (event) => {
       `${BASE_URL}/password/forgotpassword`,
       {
         email,
+      },
+      {
+        headers: { Authorization: token },
       }
-      // {
-      //   headers: { Authorization: token },
-      // }
     );
 
     console.log(res.data);
@@ -137,8 +142,15 @@ const deleteExpense = (id, li) => {
 const showLeaderBoard = () => {
   const leaderboardList = document.getElementById("leaderboard-list");
   leaderboardList.innerHTML = "";
+  const token = localStorage.getItem("token");
   axios
-    .get(`${BASE_URL}/premium/leaderBoard`)
+    .get(
+      `${BASE_URL}/premium/leaderBoard`,
+      {},
+      {
+        headers: { Authorization: token },
+      }
+    )
     .then((res) => {
       const users = res.data;
       users.forEach((user) => {
@@ -160,23 +172,36 @@ const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
 
 const setTotalItemsCount = (count) => {
   totalItems = count;
+  totalPages = Math.round(totalItems / limit);
+  totalPageElement.textContent = totalPages;
+  console.log(totalPages);
 };
 
 // called when user clicked on prev nutton
 const loadPrevNItems = async () => {
   // only call the api when not on first page
-  console.log(fetchedItems,totalItems)
-  if (page > 1) {
-    fetchedItems = fetchedItems - limit;
-    page--;
-    skip = page * limit - limit;
+  if (currentPage > 1) {
+    currentPage--;
+
+    // if current page is not the last page
+    if (nextBtn.hasAttribute("disabled")) {
+      nextBtn.removeAttribute("disabled");
+    }
+
+    // disable the prev button when current page is 1
+    if (currentPage === 1) {
+      prevBtn.setAttribute("disabled", "true");
+    }
+    currentPageElement.textContent = currentPage;
+    skip = currentPage * limit - limit;
+
     const table = document.getElementById("expense-table");
     table.innerHTML = "";
     table.innerHTML = `
     <tr id="expense-headings">
-      <th>amount</th>
-      <th>Description</th>
-      <th>Category</th>
+    <th>amount</th>
+    <th>Description</th>
+    <th>Category</th>
     </tr>`;
 
     try {
@@ -185,6 +210,7 @@ const loadPrevNItems = async () => {
       );
 
       const expenses = res.data;
+      // fetchedItems = fetchedItems - expenses.length;
 
       expenses.forEach((expense) => {
         const { amount, description, category } = expense;
@@ -201,18 +227,29 @@ const loadPrevNItems = async () => {
 // called when the user clicked on next button
 const loadNextNItems = async () => {
   // call the api only when all records are not fetched
-  console.log(fetchedItems,totalItems)
-  if (fetchedItems < totalItems) {
-    fetchedItems = fetchedItems + limit;
-    page++;
-    skip = page * limit - limit;
+  if (currentPage < totalPages) {
+    currentPage++;
+
+    // if current page is the last page
+    if (currentPage === totalPages) {
+      nextBtn.setAttribute("disabled", "true");
+    }
+
+    //show prev button when current page is not 1
+    else if (currentPage > 1) {
+      if (prevBtn.hasAttribute("disabled")) {
+        prevBtn.removeAttribute("disabled");
+      }
+    }
+    currentPageElement.textContent = currentPage;
+    skip = currentPage * limit - limit;
     const table = document.getElementById("expense-table");
     table.innerHTML = "";
     table.innerHTML = `
     <tr id="expense-headings">
-      <th>amount</th>
-      <th>Description</th>
-      <th>Category</th>
+    <th>amount</th>
+    <th>Description</th>
+    <th>Category</th>
     </tr>`;
     try {
       const res = await axios.get(
@@ -220,6 +257,7 @@ const loadNextNItems = async () => {
       );
 
       const expenses = res.data;
+      // fetchedItems = fetchedItems + expenses.length;
 
       expenses.forEach((expense) => {
         const { amount, description, category } = expense;
@@ -247,11 +285,12 @@ const addNItemsToUi = (amount, description, category, table) => {
 
 const changeRowsPerPage = (event) => {
   limit = Number(event.target.value);
-  page = 0;
+  currentPage = 0;
   skip = 0;
   fetchedItems = 0;
-
-  // console.log(event.target.value);
+  totalPages = Math.round(totalItems / limit);
+  totalPageElement.textContent = totalPages;
+  loadNextNItems();
 };
 
 const enablePremiumUserFeatures = () => {

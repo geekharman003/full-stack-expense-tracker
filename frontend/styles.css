@@ -219,6 +219,14 @@ button {
   color: white;
 }
 
+#paginated-btns-container {
+  display: flex;
+}
+
+#prev-next-btn-container {
+  margin-left: 5px;
+}
+
 #download-expense-btn {
   display: none;
 }
