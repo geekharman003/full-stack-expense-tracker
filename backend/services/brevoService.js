@@ -18,19 +18,22 @@ const sendEmail = async (email, uuid, resetUrl) => {
     },
   ];
   try {
-    const res = await tranEmailApi.sendTransacEmail({
+    await tranEmailApi.sendTransacEmail({
       sender,
       to: recievers,
       subject: "Password Reset Email",
-      textContent: `reset url:{{params.resetUrl}}/{{params.uuid}} `,
+      textContent: `reset password url:{{params.resetUrl}}/{{params.uuid}} `,
       params: {
         uuid,
         resetUrl,
       },
     });
-    console.log(res);
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      message: error.message,
+      success: false,
+    });
   }
 };
 

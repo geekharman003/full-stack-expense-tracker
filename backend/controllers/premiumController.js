@@ -1,5 +1,4 @@
 const { stringify } = require("csv-stringify/sync");
-const assert = require("assert");
 
 const User = require("../models/userModel");
 const Expense = require("../models/expenseModel");
@@ -9,6 +8,7 @@ const loadLeaderBorad = async (req, res) => {
     const users = await User.findAll({
       attributes: ["name", "totalExpenses"],
       order: [["totalExpenses", "DESC"]],
+      limit: 3,
       raw: true,
     });
 
@@ -37,7 +37,6 @@ const downloadExpenses = async (req, res) => {
 
     output = stringify(expenses, {
       header: true,
-      
       columns: ["amount", "description", "category"],
     });
 

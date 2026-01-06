@@ -11,7 +11,85 @@ body {
 button {
   font-family: inherit;
   width: fit-content;
+}
+
+button,
+a {
   cursor: pointer;
+  color: white;
+}
+
+input,
+textarea {
+  background-color: #333c45;
+  outline: none;
+  color: white;
+  padding: 5px;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.main {
+  background-color: #131929;
+  color: white;
+  min-height: 100vh;
+}
+
+/* home page css */
+header {
+  background-color: #15325a;
+  color: white;
+  padding: 1rem;
+}
+
+#navigation-list {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+}
+
+#navigation-list li {
+  margin-right: 1rem;
+}
+
+#navigation-list li a {
+  color: white;
+  text-decoration: none;
+}
+
+/* about page css */
+#about-main {
+  padding: 2rem;
+}
+
+#about-us-container {
+  width: 300px;
+  height: 80%;
+  border-radius: 5px;
+  margin: auto;
+  padding: 0.5rem;
+  background-color: #343c46;
+}
+
+#about-heading {
+  display: inline-block;
+  background-color: #15325a;
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.back-to-dashboard-btn {
+  display: inline-block;
+  margin-top: 5px;
+  color: white;
+  background-color: #131929;
+  border: none;
+  padding: 5px;
 }
 
 /* signup and login page css */
@@ -113,35 +191,24 @@ button {
 
 /* expense form css */
 
-#main header {
-  text-align: center;
-  background-color: brown;
-  padding: 1rem;
-  color: white;
-}
-
 #expense-form-container {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  margin-top: 0.5rem;
 }
 
 #expense-form {
   width: fit-content;
   padding: 1rem;
+  margin-top: 0.5rem;
   border-radius: 10px;
   box-shadow: 0px 0px 5px 1px #ddd8d8;
-  background-color: rgb(246, 242, 242);
-}
-
-#expense-form input {
-  border: none;
-  padding: 5px;
+  background-color: #343c46;
 }
 
 #expense-form button[type="submit"] {
-  background-color: rgb(73, 190, 91);
+  width: 100%;
+  background-color: #389841;
   color: white;
   border: none;
   padding: 0.5rem;
@@ -167,8 +234,10 @@ button.delete-expense-btn {
 
 #leaderboard-section {
   display: none;
+  width: 200px;
+  text-align: center;
   border: 1px solid rgb(209, 198, 198);
-  padding: 2rem;
+  padding: 1rem;
 }
 
 #leaderboard-section li {
@@ -176,7 +245,8 @@ button.delete-expense-btn {
 }
 
 #leaderboard-btn {
-  background-color: rgb(224, 224, 104);
+  background-color: #bddc41;
+  color: black;
   border: none;
   padding: 0.5rem;
   border-radius: 5px;
@@ -188,25 +258,35 @@ button.delete-expense-btn {
   list-style-type: numeric;
 }
 
+#leaderboard-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leaderborad-user-info {
+  display: flex;
+  align-items: center;
+}
+
+.leaderborad-user-info img {
+  margin-right: 2px;
+}
+
 @media screen and (max-width: 480px) {
   #expense-form-container {
     flex-direction: column-reverse;
   }
 
   #leaderboard-section {
-    margin-bottom: 1rem;
+    margin: 2rem auto;
   }
 }
 
 /* day to day expenses css */
-#filtered-expenses-container {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-}
-
 #expense-table {
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   margin: 5px 0;
 }
 
@@ -218,7 +298,11 @@ td {
   padding: 5px;
 }
 #expense-table tr:nth-child(even) {
-  background-color: rgb(228, 228, 143);
+  background-color: #727b84;
+}
+
+#expense-table tr:nth-child(odd) {
+  background-color:#15325a;
 }
 
 #expense-headings {
@@ -236,9 +320,59 @@ td {
 
 #download-expense-btn {
   display: none;
-  background-color: green;
+  align-items: center;
+  background-color: #389841;
   padding: 5px;
+  border: none;
   border-radius: 5px;
   color: white;
   text-decoration: none;
+}
+
+#download-img {
+  margin-right: 5px;
+}
+
+/* buy premium css */
+#buy-premium-main {
+  display: flex;
+  justify-content: center;
+}
+
+#buy-premium-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  padding: 2rem;
+  margin-top: 1rem;
+  background-color: #343c46;
+  border-radius: 5px;
+}
+
+#premium-features-list {
+  margin-top: 2rem;
+}
+
+#premium-features-list li span {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+#buy-premium-btn {
+  font-weight: 600;
+  margin-top: 1rem;
+  background-color: #ffce54;
+  color: black;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  transition: all 0.2s;
+  /* font-style: ; */
+}
+
+#buy-premium-btn:hover {
+  transform: scale(1.1);
+  cursor: not-allowed;
 }

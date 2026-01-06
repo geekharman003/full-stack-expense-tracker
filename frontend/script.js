@@ -173,7 +173,13 @@ const showLeaderBoard = () => {
 
 const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
   const li = document.createElement("li");
-  li.textContent = `Name-${name},Total Expenses-${totalExpenses}`;
+  const img = document.createElement("img");
+  img.src = "images/icons/user-svgrepo-com.svg";
+
+  li.innerHTML = `
+  <span class="leaderborad-user-info"><img src="images/icons/user-svgrepo-com.svg" width="20" height="20"/>${name}</span>
+  <span>₹${totalExpenses}</span>
+  `;
 
   leaderboardList.appendChild(li);
 };
@@ -374,12 +380,9 @@ const downloadExpenses = async (event) => {
 };
 
 const enablePremiumUserFeatures = () => {
-  const premiumUserMessage = document.getElementById("premium-user-message");
-  const payBtn = document.getElementById("pay-btn");
   const leaderboardSection = document.getElementById("leaderboard-section");
   const downloadExpenseBtn = document.getElementById("download-expense-btn");
-  premiumUserMessage.textContent = "You are now a premium👑 user.😀";
-  payBtn.style.display = "none";
   leaderboardSection.style.display = "initial";
-  downloadExpenseBtn.style.display = "initial";
+  downloadExpenseBtn.style.display = "flex";
+  showLeaderBoard();
 };

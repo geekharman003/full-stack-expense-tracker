@@ -1,8 +1,10 @@
 require("dotenv").config();
 const db = require("./utils/db-connection");
+const fs = require("fs");
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const morgan = require("morgan");
 const models = require("./models");
 const paymentsRoutes = require("./routes/paymentRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -13,11 +15,19 @@ const brevoService = require("./services/brevoService");
 const cashFreeService = require("./services/cashfreeService");
 const geminiService = require("./services/geminiService");
 const path = require("path");
-const PORT = 3000;
 
 app.use(express.json());
 app.use(express.static("public"));
 app.use(cors());
+
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  {
+    flags: "a",
+  }
+);
+app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use("/", paymentsRoutes);
 app.use("/user", userRoutes);
@@ -27,7 +37,7 @@ app.use("/password", passwordRoutes);
 
 db.sync()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(process.env.PORT || 3000, () => {
       console.log("server is running");
     });
   })

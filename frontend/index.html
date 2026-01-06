@@ -8,9 +8,17 @@
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   </head>
   <body>
-    <div id="main">
-      <header><h2>Expense Tracker</h2></header>
-      <button style="margin-left: 60%" id="pay-btn">Buy Premium</button>
+    <header>
+      <nav>
+        <ul id="navigation-list">
+          <li><a href="#">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="buy-premium.html">Buy Premium</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div id="home-main" class="main">
+      <!-- <button style="margin-left: 60%" id="pay-btn">Buy Premium</button> -->
       <div id="expense-form-container">
         <form id="expense-form" onsubmit="handleExpenseForm(event)">
           <label for="amount">Choose Expense Amount:</label>
@@ -28,25 +36,17 @@
             required
           ></textarea>
           <br /><br />
-          <!-- <label for="category">Choose a Category:</label>
-          <select name="category" id="category">
-            <option value="food">food</option>
-            <option value="electricity">electricity</option>
-            <option value="bills">Bills</option>
-            <option value="medicine">Medicine</option>
-          </select> -->
-          <br />
-          <br />
           <button type="submit">Add Expense</button>
         </form>
 
-        <div id="leaderboard-section">
+        <div id="leaderboard-section" style="position: relative;">
           <p id="premium-user-message"></p>
-          <h3>Leaderboard</h3>
-          <button id="leaderboard-btn" onclick="showLeaderBoard()">
+          <h3 style="text-decoration: underline wavy yellow 1px;margin-bottom: 5px;">Leaderboard</h3>
+          <!-- <button id="leaderboard-btn" onclick="showLeaderBoard()">
             Show Leaderboard
-          </button>
+          </button> -->
           <ul id="leaderboard-list"></ul>
+          <img width="60" height="60" style="position: absolute;top: -40px;rotate: 40deg;left: 90%;" src="images/icons/crown-svgrepo-com.svg" alt="">
         </div>
       </div>
       <br />
@@ -92,10 +92,10 @@
           </div>
         </div>
       </div>
-      <div >
-        <a href="#" onclick="downloadExpenses(event)" id="download-expense-btn">
-          Download Expenses
-        </a>
+      <div>
+        <button onclick="downloadExpenses(event)" id="download-expense-btn">
+          <img id="download-img" width="20" src="images/icons/download-svgrepo-com.svg" alt=""> Download Expenses
+        </button>
       </div>
     </div>
     <script
@@ -119,6 +119,7 @@
             const { expenses, isPremiumUser } = res.data;
             totalItemsCount = expenses.length;
             setTotalItemsCount(totalItemsCount);
+            localStorage.setItem("isPremiumUser", isPremiumUser);
             if (isPremiumUser) {
               enablePremiumUserFeatures();
             }
@@ -136,7 +137,7 @@
           });
       });
     </script>
-    <script src="./cashfree.js"></script>
+    <!-- <script src="./cashfree.js"></script> -->
     <script src="./script.js"></script>
   </body>
 </html>

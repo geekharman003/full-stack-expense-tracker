@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buy Premium</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul id="navigation-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="#">Buy Premium</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div id="buy-premium-main" class="main">
+      <div id="buy-premium-container">
+        <div id="premium-img-container">
+          <img
+            id="premium-img"
+            width="100"
+            height="100"
+            src="images/icons/crown-svgrepo-com.svg"
+            alt="crown icon"
+          />
+        </div>
+        <h2>Premium Features</h2>
+        <ul id="premium-features-list">
+          <li><span>See Top Spenders</span></li>
+          <li>
+            <span>Download Expenses as CSV</span>: Export Your Data Easily
+          </li>
+        </ul>
+        <button id="buy-premium-btn">Buy Premium</button>
+      </div>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.11.0/axios.min.js"
+      integrity="sha512-h9644v03pHqrIHThkvXhB2PJ8zf5E9IyVnrSfZg8Yj8k4RsO4zldcQc4Bi9iVLUCCsqNY0b4WXVV4UB+wbWENA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="cashfree.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const isPremiumUser = localStorage.getItem("isPremiumUser");
+        const premiumBtn = document.getElementById("buy-premium-btn");
+        const premiumImg = document.getElementById("premium-img");
+
+        if (isPremiumUser) {
+          premiumImg.src = "images/icons/happy-emoji-svgrepo-com.svg";
+          premiumBtn.textContent = "you are now a premium user";
+          premiumBtn.setAttribute("disabled", "true");
+        }
+      });
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

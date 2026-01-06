@@ -58,7 +58,10 @@ const addExpense = async (req, res) => {
     res.status(201).json(expense.toJSON());
   } catch (error) {
     await transaction.rollback();
-    res.status(500).send(error.message);
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    });
   }
 };
 
@@ -144,7 +147,7 @@ const loadAllExpenses = async (req, res) => {
 const loadNExpenses = async (req, res) => {
   try {
     const { limit, skip } = req.query;
-    
+
     const expenses = await Expense.findAll({
       raw: true,
       limit: Number(limit),
