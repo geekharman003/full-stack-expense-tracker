@@ -2,6 +2,9 @@ const { stringify } = require("csv-stringify/sync");
 
 const User = require("../models/userModel");
 const Expense = require("../models/expenseModel");
+const FilesDownloaded = require("../models/filesDownloadedModel");
+
+const S3Service = require("../services/S3Service");
 
 const loadLeaderBorad = async (req, res) => {
   try {
@@ -33,16 +36,27 @@ const downloadExpenses = async (req, res) => {
       raw: true,
     });
 
-    let output = null;
+    const stringifiedExpenses = JSON.stringify(expenses);
+    const filename = "Expenses";
 
-    output = stringify(expenses, {
-      header: true,
-      columns: ["amount", "description", "category"],
+    const objectURL = await S3Service.uploadToS3(
+      user,
+      stringifiedExpenses,
+      filename
+    );
+    const downloadedExpense = await FilesDownloaded.create(
+      {
+        url: objectURL,
+        userId: user.id,
+      },
+      { raw: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      objectURL,
+      urlId: downloadedExpense.id,
     });
-
-    res.setHeader("Content-Disposition", "attachment; filename=expenses.csv");
-    res.setHeader("Content-Type", "text/csv");
-    res.status(200).send(output);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -52,4 +66,27 @@ const downloadExpenses = async (req, res) => {
   }
 };
 
-module.exports = { loadLeaderBorad, downloadExpenses };
+const getDownloadedExpenses = async (req, res) => {
+  try {
+    const urls = await FilesDownloaded.findAll({
+      attributes: ["id", "url"],
+      where: {
+        userId: req.user.id,
+      },
+      raw: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      urls,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: error.message,
+      success: false,
+    });
+  }
+};
+
+module.exports = { loadLeaderBorad, downloadExpenses, getDownloadedExpenses };

@@ -1,9 +1,26 @@
 const json = require("jsonwebtoken");
+const { User } = require("../models");
 
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
   try {
     const token = req.header("Authorization");
-    const user = json.verify(token, "secretkey");
+
+    const decoded = json.verify(token, "secretkey");
+    if (!decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+        success: false,
+      });
+    }
+
+    const user = await User.findByPk(decoded.id,{raw:true});
+    if (!user) {
+      return res.status(401).json({
+        message: "Unauthorized",
+        success: false,
+      });
+    }
+
     req.user = user;
     next();
   } catch (error) {

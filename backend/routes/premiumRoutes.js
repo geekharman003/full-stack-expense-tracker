@@ -10,9 +10,15 @@ router.get(
 );
 
 router.get(
-  "/downloadExpenses",
+  "/downloadExpense",
   authentication.authenticateUser,
   premiumController.downloadExpenses
+);
+
+router.get(
+  "/downloadedExpenses",
+  authentication.authenticateUser,
+  premiumController.getDownloadedExpenses
 );
 
 module.exports = router;

@@ -20,14 +20,13 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(cors());
 
-
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
   {
     flags: "a",
   }
 );
-app.use(morgan("combined", { stream: accessLogStream }));
+// app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use("/", paymentsRoutes);
 app.use("/user", userRoutes);

@@ -356,27 +356,53 @@ const changeRowsPerPage = (event) => {
 
 const downloadExpenses = async (event) => {
   event.preventDefault();
+  const downloadedExpenseList = document.getElementById(
+    "downloaded-expense-table"
+  );
   const token = localStorage.getItem("token");
 
-  const response = await axios.get(`${BASE_URL}/premium/downloadExpenses`, {
-    responseType: "blob",
-    headers: { Authorization: token },
-  });
+  try {
+    const response = await axios.get(`${BASE_URL}/premium/downloadExpense`, {
+      headers: { Authorization: token },
+    });
 
-  const blob = new Blob([response.data], {
-    type: response.headers["content-type"],
-  });
+    const { objectURL, urlId } = response.data;
 
-  const url = window.URL.createObjectURL(blob);
+    addDownloadedExpenseToUi(downloadedExpenseList, objectURL, urlId);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "expenses.csv";
-  document.body.appendChild(a);
-  a.click();
+    const a = document.createElement("a");
+    a.href = objectURL;
+    a.download = "expenses.txt";
+    a.click();
 
-  a.remove();
-  window.URL.revokeObjectURL(url);
+    a.remove();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const fetchDownloadedExpenses = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const downloadedExpenseList = document.getElementById(
+      "downloaded-expense-table"
+    );
+    const response = await axios.get(`${BASE_URL}/premium/downloadedExpenses`, {
+      headers: { Authorization: token },
+    });
+
+    const { urls } = response.data;
+    urls.forEach((url) => {
+      addDownloadedExpenseToUi(downloadedExpenseList, url.url, url.id);
+    });
+  } catch (error) {}
+};
+
+const addDownloadedExpenseToUi = (downloadedExpenseList, objectURL, urlId) => {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${urlId}</td><td>${objectURL}</td>`;
+
+  downloadedExpenseList.appendChild(tr);
 };
 
 const enablePremiumUserFeatures = () => {
