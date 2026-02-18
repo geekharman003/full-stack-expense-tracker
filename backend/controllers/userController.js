@@ -32,8 +32,8 @@ const createUser = async (req, res) => {
   }
 };
 
-const generateAccessToken = (id, name, email) => {
-  return jwt.sign({ id, name, email }, process.env.JWT_SECRET_KEY);
+const generateAccessToken = (id, name, email, isPremium) => {
+  return jwt.sign({ id, name, email, isPremium }, process.env.JWT_SECRET_KEY);
 };
 
 const loginUser = async (req, res) => {
@@ -58,8 +58,14 @@ const loginUser = async (req, res) => {
       // if both passwords matches
       if (result) {
         // generate a token
-        const token = generateAccessToken(user.id, user.name, user.email);
-        res.status(200).json({ redirect: true, token });
+        const token = generateAccessToken(
+          user.id,
+          user.name,
+          user.email,
+          user.isPremium,
+        );
+
+        res.status(200).json({ token, redirect: true });
       } else {
         return res.status(409).send("Password is not correct");
       }

@@ -2,19 +2,16 @@ const USER_BASE_URL = "http://localhost:3000/user";
 const EXPENSE_BASE_URL = "http://localhost:3000/expenses";
 const BASE_URL = "http://localhost:3000";
 
-// pagination variables
-let currentPage = 1;
-let currentPageCount = 0;
-let limit = 3;
-let skip = 0;
-let totalItems = null; //stores the total expenses
-let totalPages = null;
-
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
 const currentPageElement = document.getElementById("current-page");
 const totalPageElement = document.getElementById("total-pages");
 
+let currentPage = 1;
+let lastPage = 1;
+
+
+// signup form
 const handleSignUpForm = (event) => {
   event.preventDefault();
   const name = event.target.name.value;
@@ -39,6 +36,8 @@ const handleSignUpForm = (event) => {
     });
 };
 
+
+// login form
 const handleLoginForm = (event) => {
   event.preventDefault();
   const email = event.target.email.value;
@@ -61,11 +60,22 @@ const handleLoginForm = (event) => {
     });
 };
 
+
+// logout functionality
+const logout = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/frontend/login.html";
+};
+
+
+// forgot form
 const handleForgotForm = async (event) => {
   event.preventDefault();
 
   const email = event.target.email.value;
   const token = localStorage.getItem("token");
+  const message = document.getElementById("message");
+
   try {
     const res = await axios.post(
       `${BASE_URL}/password/forgotpassword`,
@@ -74,86 +84,157 @@ const handleForgotForm = async (event) => {
       },
       {
         headers: { Authorization: token },
-      }
+      },
     );
 
+    message.textContent = "Reset Email Sent";
     console.log(res.data);
   } catch (error) {
+    message.textContent = "Error occuring reset mail";
     console.log(error);
   }
 };
 
-const handleExpenseForm = (event) => {
+
+// add expense form
+const handleExpenseForm = async (event) => {
   event.preventDefault();
 
   const amount = event.target.amount.value;
   const description = event.target.description.value;
-  const table = document.getElementById("expense-table");
+  const category = event.target.category.value;
   const token = localStorage.getItem("token");
 
-  axios
-    .post(
-      `${EXPENSE_BASE_URL}/addexpense`,
-      {
-        amount,
-        description,
-      },
-      { headers: { Authorization: token } }
-    )
-    .then((res) => {
-      const { id, amount, description, category } = res.data;
-      addNItemsToUi(id, amount, description, category, table);
-      // createLi(id, amount, description, category,table);
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+  await axios.post(
+    `${EXPENSE_BASE_URL}/addexpense`,
+    { amount, description, category },
+    { headers: { Authorization: token } },
+  );
+
+  // jump to last page
+  loadPage(lastPage);
 };
 
-// const createLi = (id, amount, description, category) => {
-//   const ul = document.getElementById("expense-list");
-//   const li = document.createElement("li");
-//   const deleteBtn = document.createElement("button");
 
-//   deleteBtn.textContent = "Delete";
-//   deleteBtn.addEventListener("click", () => {
-//     deleteExpense(id, li);
-//   });
-//   li.textContent = `${amount}-${description}-${category}`;
-//   li.appendChild(deleteBtn);
+// loads paginated expense data
+const loadPage = async (page) => {
+  if (page < 1) page = 1;
 
-//   ul.appendChild(li);
-// };
+  const token = localStorage.getItem("token");
 
-const deleteExpense = (id, tr) => {
-  currentPageCount--;
+  const res = await axios.get(`${EXPENSE_BASE_URL}/?page=${page}`, {
+    headers: { Authorization: token },
+  });
 
-  // if no items left on currentpage,
-  // load previous page items
-  if (currentPageCount === 0) {
-    if (totalPages > 1) {
-      totalPages--;
-    }
-    loadPrevNItems();
+  currentPage = res.data.pagination.currentPage;
+  lastPage = res.data.pagination.lastPage;
+
+  showExpenses(res.data.expenses);
+  showPagination(res.data.pagination);
+};
+
+
+// delete expense logic
+const deleteExpense = async (id) => {
+  const token = localStorage.getItem("token");
+
+  await axios.delete(`${EXPENSE_BASE_URL}/delete/${id}`, {
+    headers: { Authorization: token },
+  });
+
+  // reload current page
+  loadPage(currentPage);
+};
+
+
+// shows the expenses in table
+const showExpenses = (expenses) => {
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = "";
+
+  if (expenses.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align:center">
+          No expense found
+        </td>
+      </tr>
+    `;
+    return;
   }
-  const token = localStorage.getItem("token");
-  axios
-    .delete(`${EXPENSE_BASE_URL}/delete/${id}`, {
-      headers: { Authorization: token },
-    })
-    .then((res) => {
-      if (res.data.success) {
-        tr.remove();
-      }
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+
+  expenses.forEach(({ id, amount, description, category }) => {
+    addExpenseToUi(id, amount, description, category, tbody);
+  });
 };
 
+
+// adds the expense in the table
+const addExpenseToUi = (id, amount, description, category, tbody) => {
+  const tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td>${amount}</td>
+    <td>${description}</td>
+    <td>${category}</td>
+  `;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.className = "delete-expense-btn";
+
+  deleteBtn.addEventListener("click", async () => {
+    await deleteExpense(id);
+  });
+
+  const td = document.createElement("td");
+  td.appendChild(deleteBtn);
+  tr.appendChild(td);
+
+  tbody.appendChild(tr);
+};
+
+
+// show pagination btns
+const showPagination = (pagination) => {
+  const {
+    currentPage,
+    hasNextPage,
+    nextPage,
+    hasPrevPage,
+    prevPage,
+    lastPage,
+  } = pagination;
+
+  const container = document.querySelector(".pagination");
+  container.innerHTML = "";
+
+  if (hasPrevPage) {
+    const btn = document.createElement("button");
+    btn.textContent = "Prev";
+    btn.onclick = () => loadPage(prevPage);
+    container.appendChild(btn);
+  }
+
+  const currentBtn = document.createElement("button");
+  currentBtn.textContent = currentPage;
+  currentBtn.classList.add("active");
+  container.appendChild(currentBtn);
+
+  if (hasNextPage) {
+    const btn = document.createElement("button");
+    btn.textContent = "Next";
+    btn.onclick = () => loadPage(nextPage);
+    container.appendChild(btn);
+  }
+};
+
+
+// loads the leaderboard data
 const showLeaderBoard = () => {
   const leaderboardList = document.getElementById("leaderboard-list");
   leaderboardList.innerHTML = "";
+
   const token = localStorage.getItem("token");
   axios
     .get(`${BASE_URL}/premium/leaderBoard`, {
@@ -161,6 +242,7 @@ const showLeaderBoard = () => {
     })
     .then((res) => {
       const users = res.data;
+
       users.forEach((user) => {
         const { name, totalExpenses } = user;
         addUserToLeaderBoard(leaderboardList, name, totalExpenses);
@@ -171,6 +253,8 @@ const showLeaderBoard = () => {
     });
 };
 
+
+// adds users to the leaderboard
 const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
   const li = document.createElement("li");
   const img = document.createElement("img");
@@ -184,180 +268,12 @@ const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
   leaderboardList.appendChild(li);
 };
 
-const setTotalItemsCount = (count) => {
-  totalItems = count;
-  totalPages = Math.ceil(totalItems / limit);
-  totalPageElement.textContent = totalPages;
-  currentPageElement.textContent = totalPages;
-};
 
-// called when user clicked on prev nutton
-const loadPrevNItems = async () => {
-  // only call the api when page is >=1
-  if (currentPage > 1) {
-    currentPage--;
-    if (nextBtn.hasAttribute("disabled")) {
-      nextBtn.removeAttribute("disabled");
-    }
-    if (currentPage === 1) {
-      prevBtn.setAttribute("disabled", "true");
-    }
-
-    skip = (currentPage - 1) * limit;
-    currentPageElement.textContent = currentPage;
-    try {
-      const table = document.getElementById("expense-table");
-      const response = await axios.get(
-        `${EXPENSE_BASE_URL}/loadNExpenses?skip=${skip}&limit=${limit}`
-      );
-      table.innerHTML = "";
-      table.innerHTML = `
-      <tr id="expense-headings">
-      <th>amount</th>
-      <th>Description</th>
-      <th>Category</th>
-      <th></th>
-      </tr>
-      `;
-
-      currentPageCount = 0;
-      const expenses = response.data;
-
-      expenses.forEach((expense) => {
-        const { id, amount, description, category } = expense;
-        addNItemsToUi(id, amount, description, category, table);
-      });
-    } catch (error) {
-      console.error(error.message);
-    }
-  } else {
-    console.log("ypu are at first page");
-  }
-};
-
-// called when the user clicked on next button
-const loadNextNItems = async () => {
-  if (currentPage < totalPages) {
-    currentPage++;
-
-    //show prev button when current page is not 1
-    if (currentPage > 1) {
-      if (prevBtn.hasAttribute("disabled")) {
-        prevBtn.removeAttribute("disabled");
-      }
-    }
-
-    // if current page is the last page
-    // disable next button
-    if (currentPage === totalPages) {
-      nextBtn.setAttribute("disabled", "true");
-    }
-
-    skip = (currentPage - 1) * limit;
-    currentPageElement.textContent = currentPage;
-    try {
-      const table = document.getElementById("expense-table");
-      const res = await axios.get(
-        `${EXPENSE_BASE_URL}/loadNExpenses?limit=${limit}&skip=${skip}`
-      );
-
-      table.innerHTML = "";
-      table.innerHTML = `
-      <tr id="expense-headings">
-      <th>amount</th>
-      <th>Description</th>
-      <th>Category</th>
-      <th></th>
-      </tr>`;
-
-      currentPageCount = 0;
-      const expenses = res.data;
-
-      expenses.forEach((expense) => {
-        const { id, amount, description, category } = expense;
-        addNItemsToUi(id, amount, description, category, table);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  } else {
-    console.log("you are at last page");
-  }
-};
-
-const addNItemsToUi = (id, amount, description, category, table) => {
-  // if the current page become full
-  if (currentPageCount === limit) {
-    // check whether we already have a next page,if yes,then
-    // first load the expenses of next page
-    // if(currentPage < totalPages){
-    //   loadNextNItems();
-    //   addNItemsToUi(id,amount,description,category,table);
-    //   return;
-    // }
-
-    // otherwise create a new page
-    currentPageCount = 0;
-    currentPage++;
-    if (currentPage > totalPages) {
-      totalPages++;
-    }
-
-    if (prevBtn.hasAttribute("disabled")) {
-      prevBtn.removeAttribute("disabled");
-    }
-    table.innerHTML = "";
-    table.innerHTML = `<tr id="expense-headings">
-    <th>amount</th>
-    <th>Description</th>
-    <th>Category</th>
-    <th></th>
-    </tr>`;
-    currentPageElement.textContent = currentPage;
-    totalPageElement.textContent = currentPage;
-  }
-
-  currentPageCount++;
-  const tr = document.createElement("tr");
-  const deleteBtn = document.createElement("button");
-
-  deleteBtn.textContent = "Delete";
-  deleteBtn.className = "delete-expense-btn";
-  deleteBtn.addEventListener("click", () => {
-    deleteExpense(id, tr);
-  });
-
-  tr.innerHTML = `
-  <td>${amount}</td>
-  <td>${description}</td>
-  <td>${category}</td>
-  `;
-  const td = document.createElement("td");
-  td.appendChild(deleteBtn);
-  tr.appendChild(td);
-
-  table.appendChild(tr);
-};
-
-const changeRowsPerPage = (event) => {
-  limit = Number(event.target.value);
-  currentPage = 0;
-  skip = 0;
-  totalPages = Math.round(totalItems / limit);
-  if (totalPages > 1) {
-    if (nextBtn.hasAttribute("disabled")) {
-      nextBtn.removeAttribute("disabled");
-    }
-  }
-  totalPageElement.textContent = totalPages;
-  prevBtn.setAttribute("disabled", "true");
-  loadNextNItems();
-};
-
+// downloads the latest expenses
 const downloadExpenses = async (event) => {
   event.preventDefault();
   const downloadedExpenseList = document.getElementById(
-    "downloaded-expense-table"
+    "downloaded-expense-table",
   );
   const token = localStorage.getItem("token");
 
@@ -366,13 +282,20 @@ const downloadExpenses = async (event) => {
       headers: { Authorization: token },
     });
 
-    const { objectURL, urlId } = response.data;
+    const { objectURL } = response.data;
 
-    addDownloadedExpenseToUi(downloadedExpenseList, objectURL, urlId);
+    downloadedExpenseList.innerHTML = `
+    <tr>
+        <th>Sr. No.</th>
+        <th>URL</th>
+    </tr>
+    `;
+
+    idCounter = 1;
+    await fetchDownloadedExpenses();
 
     const a = document.createElement("a");
     a.href = objectURL;
-    a.download = "expenses.txt";
     a.click();
 
     a.remove();
@@ -381,34 +304,68 @@ const downloadExpenses = async (event) => {
   }
 };
 
+
+// loads already downloaded expenses
 const fetchDownloadedExpenses = async () => {
   const token = localStorage.getItem("token");
+
   try {
     const downloadedExpenseList = document.getElementById(
-      "downloaded-expense-table"
+      "downloaded-expense-table",
     );
     const response = await axios.get(`${BASE_URL}/premium/downloadedExpenses`, {
       headers: { Authorization: token },
     });
 
     const { urls } = response.data;
-    urls.forEach((url) => {
-      addDownloadedExpenseToUi(downloadedExpenseList, url.url, url.id);
-    });
-  } catch (error) {}
+
+    if (!urls.length) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = "2";
+      td.textContent = "No Downloaded Expenses Available";
+      td.style.textAlign = "center";
+      tr.appendChild(td);
+      downloadedExpenseList.appendChild(tr);
+    } else {
+      urls.forEach((url) => {
+        addDownloadedExpenseToUi(downloadedExpenseList, url.url);
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const addDownloadedExpenseToUi = (downloadedExpenseList, objectURL, urlId) => {
+
+// add expenses to the table
+let idCounter = 1;
+const addDownloadedExpenseToUi = (downloadedExpenseList, objectURL) => {
   const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${urlId}</td><td>${objectURL}</td>`;
+  tr.innerHTML = `<td>${idCounter}</td><td>${objectURL}</td>`;
+  idCounter++;
 
   downloadedExpenseList.appendChild(tr);
 };
 
+
+// enables premium features for premium users
 const enablePremiumUserFeatures = () => {
   const leaderboardSection = document.getElementById("leaderboard-section");
+  const premiumMessage = document.getElementById("premium-user-message");
   const downloadExpenseBtn = document.getElementById("download-expense-btn");
+  const premiumLink = document.getElementById("buy-premium-link");
+  const downloadExpenseContainer = document.getElementById(
+    "downloaded-expenses-table-container",
+  );
+
+  premiumLink.remove();
   leaderboardSection.style.display = "initial";
   downloadExpenseBtn.style.display = "flex";
+  downloadExpenseContainer.style.display = "block";
+  downloadExpenseContainer.style.padding = "2rem";
+  premiumMessage.textContent = "YOU ARE A PREMIUM USER";
+  premiumMessage.style.color = "yellow";
+
   showLeaderBoard();
 };

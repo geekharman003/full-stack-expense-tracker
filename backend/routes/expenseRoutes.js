@@ -6,18 +6,28 @@ const authentication = require("../middleware/auth");
 router.get(
   "/",
   authentication.authenticateUser,
-  expenseController.loadAllExpenses
+  expenseController.loadNExpenses,
+);
+
+router.get(
+  "/all",
+  authentication.authenticateUser,
+  expenseController.loadAllExpenses,
 );
 router.post(
   "/addexpense",
   authentication.authenticateUser,
-  expenseController.addExpense
+  expenseController.addExpense,
 );
 router.delete(
   "/delete/:id",
   authentication.authenticateUser,
-  expenseController.deleteExpense
+  expenseController.deleteExpense,
 );
-router.get("/loadNExpenses", expenseController.loadNExpenses);
+// router.get(
+//   "/loadNExpenses",
+//   authentication.authenticateUser,
+//   expenseController.loadNExpenses,
+// );
 
 module.exports = router;

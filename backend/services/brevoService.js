@@ -1,11 +1,14 @@
 const Sib = require("sib-api-v3-sdk");
 const client = Sib.ApiClient.instance;
+
 // instantiate the client
 const apiKey = client.authentications["api-key"];
 apiKey.apiKey = process.env.BREVO_API_KEY;
 
+// creates a transactional api instance
 const tranEmailApi = new Sib.TransactionalEmailsApi();
 
+// specify the sender
 const sender = {
   email: "harman163003@gmail.com",
 };

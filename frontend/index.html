@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,9 +12,21 @@
       <nav>
         <ul id="navigation-list">
           <li><a href="#">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="buy-premium.html">Buy Premium</a></li>
+          <!-- <li><a href="about.html">About</a></li> -->
+          <li id="buy-premium-link"><a href="buy-premium.html">Buy Premium</a></li>
         </ul>
+        <div id="logout-container">
+          <button type="button" id="logout-btn" onclick="logout()">
+            Logout
+            <img
+              width="15"
+              height="15"
+              style="color: white"
+              src="images/icons/logout-svgrepo-com.svg"
+              alt="logout"
+            />
+          </button>
+        </div>
       </nav>
     </header>
     <div id="home-main" class="main">
@@ -36,25 +48,47 @@
             required
           ></textarea>
           <br /><br />
+          <label for="category">Choose Category:</label>
+          <select name="category" id="category">
+            <option value="food">food</option>
+            <option value="electricity">electricity</option>
+            <option value="bills">bills</option>
+          </select>
+          <br />
+          <br />
           <button type="submit">Add Expense</button>
         </form>
 
-        <div id="leaderboard-section" style="position: relative;">
+        <div id="leaderboard-section" style="position: relative">
           <p id="premium-user-message"></p>
-          <h3 style="text-decoration: underline wavy yellow 1px;margin-bottom: 5px;">Leaderboard</h3>
+          <h3 style="margin-bottom: 5px">Leaderboard</h3>
           <!-- <button id="leaderboard-btn" onclick="showLeaderBoard()">
             Show Leaderboard
           </button> -->
           <ul id="leaderboard-list"></ul>
-          <img width="60" height="60" style="position: absolute;top: -40px;rotate: 40deg;left: 90%;" src="images/icons/crown-svgrepo-com.svg" alt="">
+          <img
+            width="60"
+            height="60"
+            style="position: absolute; top: -40px; rotate: 40deg; left: 90%"
+            src="images/icons/crown-svgrepo-com.svg"
+            alt=""
+          />
         </div>
       </div>
       <br />
       <div id="expenses-section">
-        <h2>Expenses</h2>
+        <h2>Added Expenses</h2>
         <ul id="expense-list"></ul>
         <table id="expense-table">
-          <tr id="expense-headings"></tr>
+          <thead>
+            <tr id="expense-headings">
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
         </table>
         <div id="paginated-btns-container">
           <!-- <div>
@@ -69,33 +103,17 @@
               <option value="10">10</option>
             </select>
           </div> -->
-          <div id="prev-next-btn-container">
-            <button
-              id="prev-btn"
-              class="paginated-btn"
-              onclick="loadPrevNItems()"
-              disabled
-            >
-              prev
-            </button>
-            <span id="current-page-state">
-              <span id="current-page"></span> of <span id="total-pages"></span>
-            </span>
-            <button
-              id="next-btn"
-              class="paginated-btn"
-              onclick="loadNextNItems()"
-              disabled
-            >
-              next
-            </button>
-          </div>
+          <div class="pagination"></div>
         </div>
         <button onclick="downloadExpenses(event)" id="download-expense-btn">
-          <img id="download-img" width="20" src="images/icons/download-svgrepo-com.svg" alt=""> Download Expenses
+          <img
+            id="download-img"
+            width="20"
+            src="images/icons/download-svgrepo-com.svg"
+            alt=""
+          />
+          Download Expenses
         </button>
-      </div>
-      <div>
       </div>
       <div id="downloaded-expenses-table-container">
         <h3>List of Downloaded Expenses</h3>
@@ -113,43 +131,50 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const EXPENSE_BASE_URL = "http://localhost:3000/expenses";
-        let totalItemsCount = null;
+      const token = localStorage.getItem("token");
 
-        const table = document.getElementById("expense-table");
-        const token = localStorage.getItem("token");
-
+      if (token) {
         axios
-          .get(`${EXPENSE_BASE_URL}`, {
-            headers: { Authorization: `${token}` },
+          .get("http://localhost:3000/", {
+            headers: { authorization: token },
           })
-          .then((res) => {
-            const { expenses, isPremiumUser } = res.data;
-            totalItemsCount = expenses.length;
-            setTotalItemsCount(totalItemsCount);
-            localStorage.setItem("isPremiumUser", isPremiumUser);
-            if (isPremiumUser) {
-              enablePremiumUserFeatures();
-            }
-            expenses.forEach((expense) => {
-              const { id, amount, description, category } = expense;
-              addNItemsToUi(id, amount, description, category, table);
-            });
+          .then(() => {
+            return;
           })
           .catch((err) => {
             console.log(err);
-            if (err.response.data.isPremiumUser) {
-              enablePremiumUserFeatures();
-            }
+            window.location.href = "/frontend/login.html";
           });
-      
+      } else {
+        window.location.href = "/frontend/login.html";
+      }
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        loadPage(1);
         fetchDownloadedExpenses();
-      
+        
+        const token = localStorage.getItem("token");
+
+        try {
+          const res = await axios.get(
+            "http://localhost:3000/premium/checkPremium",
+            {
+              headers: { Authorization: token },
+            },
+          );
+
+          if (res.data.isPremium) {
+            enablePremiumUserFeatures();
+          }
+        } catch (error) {
+          console.log(error);
+        }
       });
     </script>
-    <!-- <script src="./cashfree.js"></script> -->
+
     <script src="./script.js"></script>
   </body>
 </html>

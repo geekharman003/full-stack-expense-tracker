@@ -1,32 +1,28 @@
 require("dotenv").config();
+
 const db = require("./utils/db-connection");
 const fs = require("fs");
-const express = require("express");
-const app = express();
 const cors = require("cors");
-const morgan = require("morgan");
+// const cookieParser = require("cookie-parser");
 const models = require("./models");
+
 const paymentsRoutes = require("./routes/paymentRoutes");
 const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const premiumRoutes = require("./routes/premiumRoutes");
 const passwordRoutes = require("./routes/passwordRoutes");
+
 const brevoService = require("./services/brevoService");
 const cashFreeService = require("./services/cashfreeService");
 const geminiService = require("./services/geminiService");
-const path = require("path");
+
+const express = require("express");
+const app = express();
 
 app.use(express.json());
 app.use(express.static("public"));
 app.use(cors());
-
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  {
-    flags: "a",
-  }
-);
-// app.use(morgan("combined", { stream: accessLogStream }));
+// app.use(cookieParser());
 
 app.use("/", paymentsRoutes);
 app.use("/user", userRoutes);

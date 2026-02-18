@@ -5,7 +5,8 @@ const authenticateUser = async (req, res, next) => {
   try {
     const token = req.header("Authorization");
 
-    const decoded = json.verify(token, "secretkey");
+    const decoded = json.verify(token, process.env.JWT_SECRET_KEY);
+    
     if (!decoded) {
       return res.status(401).json({
         message: "Unauthorized",
@@ -14,6 +15,7 @@ const authenticateUser = async (req, res, next) => {
     }
 
     const user = await User.findByPk(decoded.id,{raw:true});
+    
     if (!user) {
       return res.status(401).json({
         message: "Unauthorized",

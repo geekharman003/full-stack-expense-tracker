@@ -1,11 +1,13 @@
 const { Cashfree, CFEnvironment } = require("cashfree-pg");
 
+// creates cashfree instance
 const cashfree = new Cashfree(
   CFEnvironment.SANDBOX,
   process.env.CASHFREE_APP_ID,
   process.env.CASHFREE_SECRET_KEY
 );
 
+// creates new order
 const createOrder = async (
   orderId,
   orderAmount,
@@ -39,11 +41,13 @@ const createOrder = async (
   }
 };
 
+// get payment status of specific order
 const getPaymentStatus = async (orderId) => {
   try {
     const response = await cashfree.PGOrderFetchPayments(orderId);
     const getOrderResponse = response.data;
     let orderStatus;
+
     if (
       getOrderResponse.filter(
         (transaction) => transaction.payment_status === "SUCCESS"

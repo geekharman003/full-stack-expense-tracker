@@ -1,10 +1,26 @@
-const { stringify } = require("csv-stringify/sync");
-
 const User = require("../models/userModel");
 const Expense = require("../models/expenseModel");
 const FilesDownloaded = require("../models/filesDownloadedModel");
 
 const S3Service = require("../services/S3Service");
+
+const checkPremium = async (req, res) => {
+  const { id } = req.user;
+
+  const user = await User.findByPk(id, {
+    attributes: ["isPremium"],
+    raw: true,
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      status: false,
+      message: "no user found",
+    });
+  }
+
+  res.status(200).json(user);
+};
 
 const loadLeaderBorad = async (req, res) => {
   try {
@@ -36,20 +52,27 @@ const downloadExpenses = async (req, res) => {
       raw: true,
     });
 
+    if (!expenses.length) {
+      return res.status(404).json({
+        success: false,
+        message: "no expense found",
+      });
+    }
+
     const stringifiedExpenses = JSON.stringify(expenses);
     const filename = "Expenses";
 
     const objectURL = await S3Service.uploadToS3(
       user,
       stringifiedExpenses,
-      filename
+      filename,
     );
     const downloadedExpense = await FilesDownloaded.create(
       {
         url: objectURL,
         userId: user.id,
       },
-      { raw: true }
+      { raw: true },
     );
 
     res.status(200).json({
@@ -89,4 +112,9 @@ const getDownloadedExpenses = async (req, res) => {
   }
 };
 
-module.exports = { loadLeaderBorad, downloadExpenses, getDownloadedExpenses };
+module.exports = {
+  checkPremium,
+  loadLeaderBorad,
+  downloadExpenses,
+  getDownloadedExpenses,
+};

@@ -3,10 +3,12 @@ const User = require("../models/userModel");
 const geminiService = require("../services/geminiService");
 const sequelize = require("../utils/db-connection");
 
+
+// adds the expense
 const addExpense = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { amount, description } = req.body;
+    const { amount, description, category } = req.body;
     const { user } = req;
 
     if (!amount || !description) {
@@ -15,7 +17,7 @@ const addExpense = async (req, res) => {
         .send("amount,description and category are required");
     }
 
-    const category = await geminiService.createCategory(description);
+    // const category = await geminiService.createCategory(description);
 
     const fetchedUser = await User.findByPk(user.id, {
       raw: true,
@@ -33,7 +35,7 @@ const addExpense = async (req, res) => {
           id: user.id,
         },
         transaction,
-      }
+      },
     );
 
     const expense = await Expense.create(
@@ -46,7 +48,7 @@ const addExpense = async (req, res) => {
       {
         raw: true,
         transaction,
-      }
+      },
     );
 
     if (!expense) {
@@ -65,6 +67,8 @@ const addExpense = async (req, res) => {
   }
 };
 
+
+// delete the expense
 const deleteExpense = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
@@ -88,7 +92,7 @@ const deleteExpense = async (req, res) => {
           id: user.id,
         },
         transaction,
-      }
+      },
     );
 
     const expenseToDelete = await Expense.destroy({
@@ -113,6 +117,7 @@ const deleteExpense = async (req, res) => {
   }
 };
 
+// load all expenses
 const loadAllExpenses = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
@@ -144,17 +149,46 @@ const loadAllExpenses = async (req, res) => {
   }
 };
 
+// 
 const loadNExpenses = async (req, res) => {
-  try {
-    const { limit, skip } = req.query;
+  const page = Number(req.query.page);
+  const { id } = req.user;
 
-    const expenses = await Expense.findAll({
-      raw: true,
-      limit: Number(limit),
-      offset: Number(skip),
+  const ITEMS_PER_PAGE = 3;
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+  let totalItems = null;
+
+  try {
+    const total = await Expense.count({
+      where: {
+        userId: id,
+      },
     });
 
-    res.status(200).json(expenses);
+    totalItems = total;
+
+    const expenses = await Expense.findAll({
+      where: {
+        userId: id,
+      },
+      attributes: ["id","amount","description","category"],
+      raw: true,
+      limit: Number(ITEMS_PER_PAGE),
+      offset: Number(offset),
+    });
+
+    res.status(200).json({
+      expenses,
+      pagination: {
+        currentPage: page,
+        hasNextPage: totalItems > page * ITEMS_PER_PAGE,
+        nextPage: page + 1,
+        hasPrevPage: page > 1,
+        prevPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+        totalItems,
+      },
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({

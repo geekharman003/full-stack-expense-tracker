@@ -2,15 +2,18 @@ const express = require("express");
 const router = express.Router();
 const paymentController = require("../controllers/paymentContoller");
 const authentication = require("../middleware/auth");
+const verifyToken = require("../middleware/token");
+
+router.get("/", verifyToken);
 
 router.post(
   "/pay",
   authentication.authenticateUser,
-  paymentController.processPayment
+  paymentController.processPayment,
 );
 router.get(
   "/payment-status/:orderId",
   authentication.authenticateUser,
-  paymentController.fetchPaymentStatus
+  paymentController.fetchPaymentStatus,
 );
 module.exports = router;

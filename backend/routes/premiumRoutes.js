@@ -4,21 +4,27 @@ const express = require("express");
 const router = express.Router();
 
 router.get(
+  "/checkPremium",
+  authentication.authenticateUser,
+  premiumController.checkPremium,
+);
+
+router.get(
   "/leaderBoard",
   authentication.authenticateUser,
-  premiumController.loadLeaderBorad
+  premiumController.loadLeaderBorad,
 );
 
 router.get(
   "/downloadExpense",
   authentication.authenticateUser,
-  premiumController.downloadExpenses
+  premiumController.downloadExpenses,
 );
 
 router.get(
   "/downloadedExpenses",
   authentication.authenticateUser,
-  premiumController.getDownloadedExpenses
+  premiumController.getDownloadedExpenses,
 );
 
 module.exports = router;

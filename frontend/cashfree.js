@@ -5,18 +5,22 @@ const cashfree = Cashfree({
 document
   .getElementById("buy-premium-btn")
   .addEventListener("click", async () => {
-    const isPremiumUser = localStorage.getItem("isPremiumUser");
-    if (!isPremiumUser) {
-      try {
-        const token = localStorage.getItem("token");
-        console.log(token);
+    const token = localStorage.getItem("token");
 
+    try {
+      const res = await axios.get("http://localhost:3000/", {
+        headers: { authorization: token },
+      });
+
+      const { isPremium } = res.data.decoded;
+
+      if (!isPremium) {
         const response = await axios.post(
           "http://localhost:3000/pay",
           {},
           {
             headers: { Authorization: token },
-          }
+          },
         );
         const { paymentSessionId, orderId } = response.data;
 
@@ -28,7 +32,7 @@ document
         const result = await cashfree.checkout(checkoutOptions);
         if (result.error) {
           console.log(
-            "User has closed the popup or there is some payment error, Check for Payment Status"
+            "User has closed the popup or there is some payment error, Check for Payment Status",
           );
 
           console.log(result.error);
@@ -45,9 +49,10 @@ document
           const token = localStorage.getItem("token");
           const response = await axios.get(
             `http://localhost:3000/payment-status/${orderId}`,
-            { headers: { Authorization: token } }
+            { headers: { Authorization: token } },
           );
           const { orderStatus } = response.data;
+
           if (orderStatus === "Success") {
             alert("Transaction is successful");
           } else if (orderStatus === "Pending") {
@@ -56,8 +61,11 @@ document
             alert("Transaction is Failed");
           }
         }
-      } catch (error) {
-        console.error("Error:", error.message);
       }
+      else{
+        console.log("you already a premium user")
+      }
+    } catch (error) {
+      console.error(error);
     }
   });

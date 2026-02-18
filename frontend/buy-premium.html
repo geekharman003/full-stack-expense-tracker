@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,9 +12,21 @@
       <nav>
         <ul id="navigation-list">
           <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
+          <!-- <li><a href="about.html">About</a></li> -->
           <li><a href="#">Buy Premium</a></li>
         </ul>
+        <div id="logout-container">
+          <button type="button" id="logout-btn" onclick="logout()">
+            Logout
+            <img
+              width="15"
+              height="15"
+              style="color: white"
+              src="images/icons/logout-svgrepo-com.svg"
+              alt="logout"
+            />
+          </button>
+        </div>
       </nav>
     </header>
     <div id="buy-premium-main" class="main">
@@ -32,7 +44,7 @@
         <ul id="premium-features-list">
           <li><span>See Top Spenders</span></li>
           <li>
-            <span>Download Expenses as CSV</span>: Export Your Data Easily
+            <span>Download Expenses as text file</span>: Export Your Data Easily
           </li>
         </ul>
         <button id="buy-premium-btn">Buy Premium</button>
@@ -45,20 +57,48 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="cashfree.js"></script>
+
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const isPremiumUser = localStorage.getItem("isPremiumUser");
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        // verify the token
+        axios
+          .get("http://localhost:3000/", {
+            headers: { authorization: token },
+          })
+          .then((res) => {
+            return;
+          })
+          .catch(() => {
+            window.location.href = "/frontend/login.html";
+          });
+      } else {
+        window.location.href = "/frontend/login.html";
+      }
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
         const premiumBtn = document.getElementById("buy-premium-btn");
         const premiumImg = document.getElementById("premium-img");
+        const buyPremiumBtn = document.getElementById("buy-premium-btn");
 
-        if (isPremiumUser) {
+        const res = await axios.get("http://localhost:3000/", {
+          headers: { authorization: token },
+        });
+
+        const { isPremium } = res.data.decoded;
+
+        if (isPremium) {
           premiumImg.src = "images/icons/happy-emoji-svgrepo-com.svg";
           premiumBtn.textContent = "you are now a premium user";
           premiumBtn.setAttribute("disabled", "true");
+          buyPremiumBtn.style.cursor = "not-allowed";
         }
       });
     </script>
+    <script src="cashfree.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
