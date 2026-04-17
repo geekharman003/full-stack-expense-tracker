@@ -48,13 +48,13 @@
             required
           ></textarea>
           <br /><br />
-          <label for="category">Choose Category:</label>
+          <!-- <label for="category">Choose Category:</label>
           <select name="category" id="category">
             <option value="food">food</option>
             <option value="electricity">electricity</option>
             <option value="bills">bills</option>
-          </select>
-          <br />
+          </select> -->
+          <!-- <br /> -->
           <br />
           <button type="submit">Add Expense</button>
         </form>
@@ -118,7 +118,7 @@
       <div id="downloaded-expenses-table-container">
         <h3>List of Downloaded Expenses</h3>
         <table id="downloaded-expense-table">
-          <tr>
+          <tr style="background-color: #15325a;color: white;">
             <th>Sr. No.</th>
             <th>URL</th>
           </tr>
@@ -155,7 +155,7 @@
       document.addEventListener("DOMContentLoaded", async () => {
         loadPage(1);
         fetchDownloadedExpenses();
-        
+
         const token = localStorage.getItem("token");
 
         try {

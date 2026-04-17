@@ -18,7 +18,7 @@ const processPayment = async (req, res) => {
       orderAmount,
       orderCurrency,
       customerId,
-      customerPhone
+      customerPhone,
     );
 
     // save the payment info in the database
@@ -52,7 +52,7 @@ const fetchPaymentStatus = async (req, res) => {
           where: {
             id: user.id,
           },
-        }
+        },
       );
     }
 
@@ -64,7 +64,7 @@ const fetchPaymentStatus = async (req, res) => {
         where: {
           orderId,
         },
-      }
+      },
     );
 
     res.status(200).json({ orderStatus });

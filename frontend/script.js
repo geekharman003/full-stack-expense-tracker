@@ -10,7 +10,6 @@ const totalPageElement = document.getElementById("total-pages");
 let currentPage = 1;
 let lastPage = 1;
 
-
 // signup form
 const handleSignUpForm = (event) => {
   event.preventDefault();
@@ -36,7 +35,6 @@ const handleSignUpForm = (event) => {
     });
 };
 
-
 // login form
 const handleLoginForm = (event) => {
   event.preventDefault();
@@ -60,13 +58,11 @@ const handleLoginForm = (event) => {
     });
 };
 
-
 // logout functionality
 const logout = () => {
   localStorage.removeItem("token");
   window.location.href = "/frontend/login.html";
 };
-
 
 // forgot form
 const handleForgotForm = async (event) => {
@@ -95,26 +91,24 @@ const handleForgotForm = async (event) => {
   }
 };
 
-
 // add expense form
 const handleExpenseForm = async (event) => {
   event.preventDefault();
 
   const amount = event.target.amount.value;
   const description = event.target.description.value;
-  const category = event.target.category.value;
+  // const category = event.target.category.value;
   const token = localStorage.getItem("token");
 
   await axios.post(
     `${EXPENSE_BASE_URL}/addexpense`,
-    { amount, description, category },
+    { amount, description },
     { headers: { Authorization: token } },
   );
 
   // jump to last page
   loadPage(lastPage);
 };
-
 
 // loads paginated expense data
 const loadPage = async (page) => {
@@ -133,7 +127,6 @@ const loadPage = async (page) => {
   showPagination(res.data.pagination);
 };
 
-
 // delete expense logic
 const deleteExpense = async (id) => {
   const token = localStorage.getItem("token");
@@ -145,7 +138,6 @@ const deleteExpense = async (id) => {
   // reload current page
   loadPage(currentPage);
 };
-
 
 // shows the expenses in table
 const showExpenses = (expenses) => {
@@ -167,7 +159,6 @@ const showExpenses = (expenses) => {
     addExpenseToUi(id, amount, description, category, tbody);
   });
 };
-
 
 // adds the expense in the table
 const addExpenseToUi = (id, amount, description, category, tbody) => {
@@ -193,7 +184,6 @@ const addExpenseToUi = (id, amount, description, category, tbody) => {
 
   tbody.appendChild(tr);
 };
-
 
 // show pagination btns
 const showPagination = (pagination) => {
@@ -229,7 +219,6 @@ const showPagination = (pagination) => {
   }
 };
 
-
 // loads the leaderboard data
 const showLeaderBoard = () => {
   const leaderboardList = document.getElementById("leaderboard-list");
@@ -253,7 +242,6 @@ const showLeaderBoard = () => {
     });
 };
 
-
 // adds users to the leaderboard
 const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
   const li = document.createElement("li");
@@ -267,7 +255,6 @@ const addUserToLeaderBoard = (leaderboardList, name, totalExpenses) => {
 
   leaderboardList.appendChild(li);
 };
-
 
 // downloads the latest expenses
 const downloadExpenses = async (event) => {
@@ -304,7 +291,6 @@ const downloadExpenses = async (event) => {
   }
 };
 
-
 // loads already downloaded expenses
 const fetchDownloadedExpenses = async () => {
   const token = localStorage.getItem("token");
@@ -337,7 +323,6 @@ const fetchDownloadedExpenses = async () => {
   }
 };
 
-
 // add expenses to the table
 let idCounter = 1;
 const addDownloadedExpenseToUi = (downloadedExpenseList, objectURL) => {
@@ -347,7 +332,6 @@ const addDownloadedExpenseToUi = (downloadedExpenseList, objectURL) => {
 
   downloadedExpenseList.appendChild(tr);
 };
-
 
 // enables premium features for premium users
 const enablePremiumUserFeatures = () => {

@@ -8,7 +8,7 @@ const sequelize = require("../utils/db-connection");
 const addExpense = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { amount, description, category } = req.body;
+    const { amount, description } = req.body;
     const { user } = req;
 
     if (!amount || !description) {
@@ -17,7 +17,7 @@ const addExpense = async (req, res) => {
         .send("amount,description and category are required");
     }
 
-    // const category = await geminiService.createCategory(description);
+    const category = await geminiService.createCategory(description);
 
     const fetchedUser = await User.findByPk(user.id, {
       raw: true,
