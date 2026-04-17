@@ -124,13 +124,15 @@ run live server
 ## 📸 Screenshots
 
 * Signup Page
+<img width="1280" height="720" alt="expense-signup-page" src="https://github.com/user-attachments/assets/fa13dcd8-c047-48d0-8cf6-2596058ca5fd" />
 
 
 * Login Page
+<img width="1280" height="720" alt="expense-login-page" src="https://github.com/user-attachments/assets/8ad84acf-85d2-45f8-a1ad-fca85d134689" />
 
 
 * main page
-
+<img width="1280" height="720" alt="expense-main-page" src="https://github.com/user-attachments/assets/1cc00f31-a411-4710-aa23-a642958b9c1b" />
 
 ---
 
